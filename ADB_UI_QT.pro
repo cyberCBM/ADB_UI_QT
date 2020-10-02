@@ -9,14 +9,22 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Source/fileexplorer.cpp \
     Source/main.cpp \
-    Source/mainwindow.cpp
+    Source/mainwindow.cpp \
+    Source/packagemanager.cpp \
+    Source/shellterm.cpp
 
 HEADERS += \
     Header/mainwindow.hpp \
-    Header/mainwindow.hpp
+    Header/fileexplorer.hpp \
+    Header/packagemanager.hpp \
+    Header/shellterm.hpp
 
 FORMS += \
+    UIView/FileExplorer.ui \
+    UIView/PackageManager.ui \
+    UIView/ShellTerm.ui \
     UIView/mainwindow.ui
 
 TRANSLATIONS += \
