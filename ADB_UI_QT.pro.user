@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.13.0, 2020-10-02T09:30:30. -->
+<!-- Written by QtCreator 4.13.0, 2020-10-02T12:14:32. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -94,8 +94,8 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
     <value type="bool">true</value>
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/chaitanyamodi/LocalWork/OtherProtos/ADB_UI_QT/build-ADB_UI_QT-Desktop_Qt_5_15_0_clang_64bit-Debug</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/chaitanyamodi/LocalWork/OtherProtos/ADB_UI_QT/build-ADB_UI_QT-Desktop_Qt_5_15_0_clang_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/chaitanyamodi/LocalWork/OtherProtos/ADB_UI_Tool/build-ADB_UI_QT-Desktop_Qt_5_15_0_clang_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/chaitanyamodi/LocalWork/OtherProtos/ADB_UI_Tool/build-ADB_UI_QT-Desktop_Qt_5_15_0_clang_64bit-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -337,7 +337,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/chaitanyamodi/LocalWork/OtherProtos/ADB_UI_QT/build-ADB_UI_QT-Desktop_Qt_5_15_0_clang_64bit-Debug/ADB_UI_QT.app/Contents/MacOS</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/chaitanyamodi/LocalWork/OtherProtos/ADB_UI_Tool/build-ADB_UI_QT-Desktop_Qt_5_15_0_clang_64bit-Debug/ADB_UI_QT.app/Contents/MacOS</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

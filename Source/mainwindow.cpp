@@ -11,7 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    //    ui->deviceComboBox->addItem("devices");
+    //    ui->deviceComboBox->addItem("devices2");
+    //    ui->deviceComboBox->addItem("devices556");
     getConnectedDevices();
 }
 
@@ -20,26 +22,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::resetComboBox()
-{
-    for(int i = 0; i < ui->deviceComboBox->count(); i++)
-    {
-        ui->deviceComboBox->removeItem(i);
-    }
-}
-
-QString MainWindow::substring(QString string, int start, int end)
-{
-    return string.mid(start, end-start);
-}
-
 void MainWindow::getConnectedDevices()
 {
-    // reset devices list combobox
-    resetComboBox();
-
-    // reset devices array
-    devices.clear();
+    ui->deviceComboBox->clear();
 
     // create process object
     QProcess myProcess;
@@ -47,36 +32,23 @@ void MainWindow::getConnectedDevices()
     myProcess.waitForFinished();
 
     // read adb devices data to array
-    QStringList outputData;
     QByteArray output = myProcess.readAllStandardOutput();
     qDebug() << "output is: " << output;
 
     // now parse devices
     int lastItem = 0;
-    for(int i = 0; i < output.size(); i++)
-    {
-        if(output[i] == '\n' || output[i] == '\t')
+
+    while(lastItem != -1) {
+        auto nind = output.indexOf("\n", lastItem);
+        auto tind = output.indexOf("\t", nind);
+        if(nind!= -1 && tind!= -1)
         {
-            outputData << substring(QString(output), lastItem, i);
-            lastItem = i;
+            //outputData << output.mid(nind, tind);
+            ui->deviceComboBox->addItem(output.mid(nind+1, (tind-nind)-1));
         }
+        lastItem = tind;
     }
 
-    // add to class device list array
-    for(int i = 1; i < outputData.size()-1; i++)
-    {
-        if(i % 2 == 1)
-        {
-            devices << outputData[i];
-        }
-    }
-
-    // add to devices list
-    ui->deviceComboBox->addItems(devices);
-
-    for (int i = 0 ; i < ui->deviceComboBox->count() ; ++i) {
-        ui->deviceComboBox->setItemData(i, Qt::AlignCenter, Qt::TextAlignmentRole);
-    }
 }
 
 // show right message
@@ -139,5 +111,4 @@ void MainWindow::on_refreshPushButton_clicked()
     std::cout << "just check";
     getConnectedDevices();
 }
-
 

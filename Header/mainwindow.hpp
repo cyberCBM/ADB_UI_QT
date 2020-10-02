@@ -32,10 +32,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QStringList devices;
-    QString substring(QString string, int start, int end);
     QProcess *shell;
-
-    void resetComboBox();
 };
 
 #endif // MAINWINDOW_H

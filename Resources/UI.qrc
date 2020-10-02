@@ -6,5 +6,6 @@
         <file>PaclageApk.png</file>
         <file>Shell.png</file>
         <file>adbSetting.png</file>
+        <file>back.png</file>
     </qresource>
 </RCC>
