@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/UI">
         <file>InstallApk.png</file>
-        <file>nextpng.com.png</file>
-        <file>paclageApk.png</file>
         <file>Refreshflat.png</file>
-        <file>unnamed.png</file>
+        <file>Explorer.png</file>
+        <file>PaclageApk.png</file>
+        <file>Shell.png</file>
     </qresource>
 </RCC>

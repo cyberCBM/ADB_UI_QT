@@ -28,8 +28,8 @@
            <string>UnInstall(Packages)</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>:/UI/Resources/paclageApk.png</normaloff>:/UI/Resources/paclageApk.png</iconset>
+           <iconset resource="../Resources/UI.qrc">
+            <normaloff>:/UI/PaclageApk.png</normaloff>:/UI/PaclageApk.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -45,8 +45,8 @@
            <string>ADB Shell</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>:/UI/Resources/unnamed.png</normaloff>:/UI/Resources/unnamed.png</iconset>
+           <iconset resource="../Resources/UI.qrc">
+            <normaloff>:/UI/Shell.png</normaloff>:/UI/Shell.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -62,8 +62,8 @@
            <string>Explore</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>:/UI/Resources/nextpng.com.png</normaloff>:/UI/Resources/nextpng.com.png</iconset>
+           <iconset resource="../Resources/UI.qrc">
+            <normaloff>:/UI/Explorer.png</normaloff>:/UI/Explorer.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -79,8 +79,8 @@
            <string>Install(Packages)</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>:/UI/Resources/InstallApk.png</normaloff>:/UI/Resources/InstallApk.png</iconset>
+           <iconset resource="../Resources/UI.qrc">
+            <normaloff>:/UI/InstallApk.png</normaloff>:/UI/InstallApk.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -164,8 +164,8 @@
             <string>Refresh</string>
            </property>
            <property name="icon">
-            <iconset>
-             <normaloff>:/UI/Resources/Refreshflat.png</normaloff>:/UI/Resources/Refreshflat.png</iconset>
+            <iconset resource="../Resources/UI.qrc">
+             <normaloff>:/UI/Refreshflat.png</normaloff>:/UI/Refreshflat.png</iconset>
            </property>
           </widget>
          </item>
@@ -227,6 +227,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../Resources/UI.qrc"/>
+ </resources>
  <connections/>
 </ui>
