@@ -19,7 +19,8 @@ HEADERS += \
     Header/mainwindow.hpp \
     Header/fileexplorer.hpp \
     Header/packagemanager.hpp \
-    Header/shellterm.hpp
+    Header/shellterm.hpp \
+    Header/utilities.hpp
 
 FORMS += \
     UIView/FileExplorer.ui \

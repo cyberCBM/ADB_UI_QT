@@ -3,36 +3,36 @@
 #include "shellterm.hpp"
 #include "fileexplorer.hpp"
 #include "packagemanager.hpp"
+#include "utilities.hpp"
 
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    m_UI(new Ui::MainWindow)
 {
-    ui->setupUi(this);
-    //    ui->deviceComboBox->addItem("devices");
-    //    ui->deviceComboBox->addItem("devices2");
-    //    ui->deviceComboBox->addItem("devices556");
+    m_UI->setupUi(this);
     getConnectedDevices();
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+
 }
 
 void MainWindow::getConnectedDevices()
 {
-    ui->deviceComboBox->clear();
+    m_UI->deviceComboBox->clear();
 
     // create process object
-    QProcess myProcess;
-    myProcess.start("adb devices");
-    myProcess.waitForFinished();
 
-    // read adb devices data to array
-    QByteArray output = myProcess.readAllStandardOutput();
+
+    auto adbStr = m_UI->adbPathTE->text();
+    checkADBPath(adbStr, this);
+
+    QString adbCMD = m_UI->adbPathTE->text() + "/adb devices";
+
+    auto output = runProcess(adbCMD);
     qDebug() << "output is: " << output;
 
     // now parse devices
@@ -44,7 +44,7 @@ void MainWindow::getConnectedDevices()
         if(nind!= -1 && tind!= -1)
         {
             //outputData << output.mid(nind, tind);
-            ui->deviceComboBox->addItem(output.mid(nind+1, (tind-nind)-1));
+            m_UI->deviceComboBox->addItem(output.mid(nind+1, (tind-nind)-1));
         }
         lastItem = tind;
     }
@@ -67,7 +67,7 @@ void MainWindow::showError()
 
 void MainWindow::on_explorePushButton_clicked()
 {
-    FileExplorer *explorer = new FileExplorer(0, ui->deviceComboBox->currentText());
+    FileExplorer *explorer = new FileExplorer(0, m_UI->deviceComboBox->currentText());
     explorer->show();
 }
 
@@ -77,38 +77,40 @@ void MainWindow::on_installPushButton_clicked()
                                                     tr("Any"), "~/", tr("APK Files (*.apk)"));
     qDebug() << "Selected file is: " << fileName;
 
-    QString program = QString("adb -s %1 install \"%2\"").arg(ui->deviceComboBox->currentText(), fileName);
-    program.remove(QRegExp("[\\n\\t\\r]"));
-    program.remove(QChar('\\', Qt::CaseInsensitive));
+    QString program = QString("adb -s %1 install \"%2\"").arg(m_UI->deviceComboBox->currentText(), fileName);
     qDebug() << "program is: " << program;
 
-    // create process object
-    QProcess myProcess;
-    myProcess.start(program);
-    myProcess.waitForFinished();
-
     // read adb devices data to array
-    QByteArray output = myProcess.readAllStandardOutput();
-    QByteArray badOutput = myProcess.readAllStandardError();
+    auto output = runProcess(program);
+
     qDebug() << "output is: " << output;
-    qDebug() << "bad output is: " << badOutput;
+
+    //QByteArray badOutput = myProcess.readAllStandardError();
+    //qDebug() << "bad output is: " << badOutput;
 }
 
 void MainWindow::on_adbShellPushButton_clicked()
 {
-    ShellTerm *shell = new ShellTerm(0, ui->deviceComboBox->currentText());
+    ShellTerm *shell = new ShellTerm(0, m_UI->deviceComboBox->currentText());
     shell->show();
 }
 
 void MainWindow::on_uninstallPushButton_clicked()
 {
-    PackageManager *pm = new PackageManager(0, ui->deviceComboBox->currentText());
+    PackageManager *pm = new PackageManager(0, m_UI->deviceComboBox->currentText());
     pm->show();
 }
 
 void MainWindow::on_refreshPushButton_clicked()
 {
-    std::cout << "just check";
     getConnectedDevices();
 }
 
+
+void MainWindow::on_browsePushButton_clicked()
+{
+    QString filePath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),"/home",
+                                                         QFileDialog::ShowDirsOnly|QFileDialog::DontResolveSymlinks);
+    m_UI->adbPathTE->setText(filePath);
+
+}

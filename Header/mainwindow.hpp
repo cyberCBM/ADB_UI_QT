@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <vector>
+#include <memory>
 
 namespace Ui {
 class MainWindow;
@@ -29,10 +30,11 @@ private slots:
     void on_adbShellPushButton_clicked();
     void on_uninstallPushButton_clicked();
 
+    void on_browsePushButton_clicked();
+
 private:
-    Ui::MainWindow *ui;
-    QStringList devices;
-    QProcess *shell;
+    std::unique_ptr<Ui::MainWindow> m_UI;
+    std::unique_ptr<QProcess> m_Shell;
 };
 
 #endif // MAINWINDOW_H
