@@ -7,6 +7,7 @@
 #include <QStringListModel>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <memory>
 
 namespace Ui {
 class PackageManager;
@@ -27,12 +28,13 @@ private slots:
 
 private:
     Ui::PackageManager *ui;
-    QProcess *adb;
+    std::shared_ptr<QProcess> adb;
     QString currentDevice;
-    void parseData();
     QStringList List;
-    QString substring(QString string, int start, int end);
     QStringListModel *model;
+
+    void parseData();
+    QString substring(QString string, int start, int end);
     QString removeGarbage(QString string);
 };
 

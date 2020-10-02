@@ -8,6 +8,7 @@
 #include <QStringListModel>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <memory>
 
 namespace Ui {
 class FileExplorer;
@@ -35,9 +36,8 @@ private slots:
     void on_rename_clicked(bool checked);
 
 private:
-    Ui::FileExplorer *ui;
-    QProcess *shell;
-    QProcess *adb;
+    Ui::FileExplorer *m_UI;
+    std::shared_ptr<QProcess> m_ShellADB;
     QString currentDevice;
     QStringListModel *model;
     QStringList List;

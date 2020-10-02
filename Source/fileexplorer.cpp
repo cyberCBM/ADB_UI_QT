@@ -3,19 +3,19 @@
 
 FileExplorer::FileExplorer(QWidget *parent, QString device) :
     QWidget(parent),
-    ui(new Ui::FileExplorer)
+    m_UI(new Ui::FileExplorer),
+    m_ShellADB(nullptr)
 {
-    ui->setupUi(this);
+    m_UI->setupUi(this);
 
     model = new QStringListModel(this);
 
     gettingDir = false;
 
     // set current dir
-    ui->currentDir->setText("/");
+    m_UI->currentDir->setText("/");
 
-    shell = new QProcess();
-    adb = new QProcess();
+    m_ShellADB = std::make_shared<QProcess>();
 
     currentDevice = device;
     qDebug() << "current device is: " << currentDevice;
@@ -23,16 +23,20 @@ FileExplorer::FileExplorer(QWidget *parent, QString device) :
     // start process
     QString program = QString("adb -s %1 shell").arg(currentDevice);
     qDebug() << "program is: " << program;
-    shell->start(program);
+    m_ShellADB->start(program);
 
-    connect(adb, SIGNAL(readyReadStandardOutput()), this, SLOT(adbOutputReady()));
-    connect(ui->files,SIGNAL(doubleClicked(const QModelIndex)),this,SLOT(ItemClicked(QModelIndex)));
+    connect(m_ShellADB.get(), SIGNAL(readyReadStandardOutput()), this, SLOT(adbOutputReady()));
+    connect(m_UI->files,SIGNAL(doubleClicked(const QModelIndex)),this,SLOT(ItemClicked(QModelIndex)));
 
     // send ls command
-    shell->write("clear\n");
-    shell->write("ls -F\n");
-    shell->waitForFinished(1000);
+    m_ShellADB->write("clear\n");
+    m_ShellADB->write("ls -F\n");
+    m_ShellADB->waitForFinished(1000);
     outputReady();
+}
+
+FileExplorer::~FileExplorer(){
+    delete m_UI;
 }
 
 QString FileExplorer::substring(QString string, int start, int end)
@@ -62,12 +66,7 @@ QString FileExplorer::removeUnessaryChars(QString str)
     return result;
 }
 
-FileExplorer::~FileExplorer()
-{
-    delete ui;
-}
-
-void FileExplorer::ItemClicked (QModelIndex index )
+void FileExplorer::ItemClicked (QModelIndex index)
 {
     // clear data
     List.clear();
@@ -78,27 +77,26 @@ void FileExplorer::ItemClicked (QModelIndex index )
     newDir.append("\"\n");
 
     // cd into directory
-    shell->write(newDir.toLocal8Bit());
-    shell->write("clear\n");
-    shell->write("ls -F\n");
-    shell->waitForFinished(1000);
+    m_ShellADB->write(newDir.toLocal8Bit());
+    m_ShellADB->write("clear\n");
+    m_ShellADB->write("ls -F\n");
+    m_ShellADB->waitForFinished(1000);
     outputReady();
 
     // update current dir
     gettingDir = true;
-    shell->write("pwd\n");
-    shell->waitForFinished(500);
+    m_ShellADB->write("pwd\n");
+    m_ShellADB->waitForFinished(500);
     outputReady();
 
     // set model list
     model->setStringList(List);
-    ui->files->setModel(model);
+    m_UI->files->setModel(model);
 }
 
 void FileExplorer::adbOutputReady()
 {
-    QByteArray outputData = adb->readAllStandardOutput();
-
+    QByteArray outputData = m_ShellADB->readAllStandardOutput();
     qDebug() << "adb output: " << outputData;
 }
 
@@ -106,15 +104,15 @@ void FileExplorer::outputReady()
 {
     if(gettingDir == true)
     {
-        QByteArray outputData = shell->readAllStandardOutput();
+        QByteArray outputData = m_ShellADB->readAllStandardOutput();
         qDebug() << "Current dir is: " << outputData;
-        ui->currentDir->setText(QString(outputData));
+        m_UI->currentDir->setText(QString(outputData));
         gettingDir = false;
 
         return;
     }
 
-    QByteArray outputData = shell->readAllStandardOutput();
+    QByteArray outputData = m_ShellADB->readAllStandardOutput();
     int lastIndex = 0;
 
     // get rid of first garbage characters
@@ -136,7 +134,7 @@ void FileExplorer::outputReady()
 
     // set model list
     model->setStringList(List);
-    ui->files->setModel(model);
+    m_UI->files->setModel(model);
 
     qDebug() << "Good output is: " << outputData;
 }
@@ -144,16 +142,16 @@ void FileExplorer::outputReady()
 
 void FileExplorer::on_up_clicked(bool checked)
 {
-    shell->write("cd ..\n");
-    shell->write("clear\n");
-    shell->write("ls -F\n");
-    shell->waitForFinished(1000);
+    m_ShellADB->write("cd ..\n");
+    m_ShellADB->write("clear\n");
+    m_ShellADB->write("ls -F\n");
+    m_ShellADB->waitForFinished(1000);
     outputReady();
 
     // update current dir
     gettingDir = true;
-    shell->write("pwd\n");
-    shell->waitForFinished(500);
+    m_ShellADB->write("pwd\n");
+    m_ShellADB->waitForFinished(500);
     outputReady();
 }
 
@@ -164,14 +162,14 @@ void FileExplorer::on_upload_clicked(bool checked)
     qDebug() << "Selected file is: " << fileName;
 
     // now create new process to upload file
-    QString adbCommand = QString("adb -s %1 push \"%2\" \"%3\"").arg(currentDevice, fileName, substring(ui->currentDir->text(), 0, ui->currentDir->text().size()-1));
+    QString adbCommand = QString("adb -s %1 push \"%2\" \"%3\"").arg(currentDevice, fileName, substring(m_UI->currentDir->text(), 0, m_UI->currentDir->text().size()-1));
     qDebug() << "program is: " << adbCommand;
-    adb->start(adbCommand);
+    m_ShellADB->start(adbCommand);
 
     // now refresh
-    shell->write("clear\n");
-    shell->write("ls -F\n");
-    shell->waitForFinished(1000);
+    m_ShellADB->write("clear\n");
+    m_ShellADB->write("ls -F\n");
+    m_ShellADB->waitForFinished(1000);
     outputReady();
 }
 
@@ -183,18 +181,18 @@ void FileExplorer::on_download_clicked(bool checked)
     qDebug() << "Selected file is: " << fileName;
 
     // now create new process to upload file
-    QModelIndex index = ui->files->currentIndex();
+    QModelIndex index = m_UI->files->currentIndex();
     QString itemText = index.data(Qt::DisplayRole).toString();
-    QString filePath = substring(ui->currentDir->text(), 0, ui->currentDir->text().size()-1) + "/" + substring(itemText, 1, itemText.size());
+    QString filePath = substring(m_UI->currentDir->text(), 0, m_UI->currentDir->text().size()-1) + "/" + substring(itemText, 1, itemText.size());
     QString adbCommand = QString("adb -s %1 pull \"%2\" \"%3\"").arg(currentDevice, filePath, fileName);
     qDebug() << "program is: " << adbCommand;
-    adb->start(adbCommand);
+    m_ShellADB->start(adbCommand);
 }
 
 void FileExplorer::on_delete_2_clicked(bool checked)
 {
     // get file name
-    QModelIndex index = ui->files->currentIndex();
+    QModelIndex index = m_UI->files->currentIndex();
     QString itemText = index.data(Qt::DisplayRole).toString();
     QString command = QString("rm -rf \"%1\"").arg(itemText);
     command.remove(QRegExp("[\\n\\t\\r]"));
@@ -202,17 +200,17 @@ void FileExplorer::on_delete_2_clicked(bool checked)
 
     qDebug() << "Delete command is: " << command;
 
-    shell->write("clear\n");
-    shell->write(command.toUtf8());
-    shell->write("ls -F\n");
-    shell->waitForFinished(1000);
+    m_ShellADB->write("clear\n");
+    m_ShellADB->write(command.toUtf8());
+    m_ShellADB->write("ls -F\n");
+    m_ShellADB->waitForFinished(1000);
     outputReady();
 }
 
 void FileExplorer::on_rename_clicked(bool checked)
 {
     // get file name
-    QModelIndex index = ui->files->currentIndex();
+    QModelIndex index = m_UI->files->currentIndex();
     QString itemText = index.data(Qt::DisplayRole).toString();
     itemText.remove(QRegExp("[\\n\\t\\r]"));
 
@@ -231,10 +229,10 @@ void FileExplorer::on_rename_clicked(bool checked)
 
         qDebug() << "Move command is: " << command;
 
-        shell->write("clear\n");
-        shell->write(command.toUtf8());
-        shell->write("ls -F\n");
-        shell->waitForFinished(1000);
+        m_ShellADB->write("clear\n");
+        m_ShellADB->write(command.toUtf8());
+        m_ShellADB->write("ls -F\n");
+        m_ShellADB->waitForFinished(1000);
         outputReady();
     }
     else
