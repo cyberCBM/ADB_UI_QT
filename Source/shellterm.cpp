@@ -1,28 +1,27 @@
 #include "shellterm.hpp"
 #include "ui_ShellTerm.h"
 
-ShellTerm::ShellTerm(QWidget *parent, QString device) :
+ShellTerm::ShellTerm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ShellTerm)
 {
     ui->setupUi(this);
 
-    shell = new QProcess();
-    currentDevice = device;
+    shell = std::shared_ptr<QProcess>();
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    qDebug() << "current device is: " << currentDevice;
 
-    qDebug() << "current device is: " << device;
+    if(!currentDevice.isEmpty())
+    {
+        // start process
+        QString program = QString("adb -s %1 ShellTerm").arg(currentDevice);
+        outputData = runProcess(program);
+        outputData += "~ \n";
+        ui->terminal->setText(QString(outputData));
+    }
 
-    // start process
-    QString program = QString("adb -s %1 ShellTerm").arg(currentDevice);
-    qDebug() << "program is: " << program;
-    shell->start(program);
-
-    connect(shell, SIGNAL(readyReadStandardOutput()), this, SLOT(outputReady()));
-    connect(shell, SIGNAL(readyReadErrorOutput()), this, SLOT(outputReady()));
-
-    // append to output data
-    outputData += "~ \n";
-    ui->terminal->setText(QString(outputData));
+    connect(shell.get(), SIGNAL(readyReadStandardOutput()), this, SLOT(outputReady()));
+    connect(shell.get(), SIGNAL(readyReadErrorOutput()), this, SLOT(outputReady()));
 }
 
 ShellTerm::~ShellTerm()

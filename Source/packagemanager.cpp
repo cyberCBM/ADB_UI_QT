@@ -1,7 +1,7 @@
 #include "packagemanager.hpp"
 #include "ui_PackageManager.h"
 
-PackageManager::PackageManager(QWidget *parent, QString device) :
+PackageManager::PackageManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PackageManager)
 {
@@ -9,8 +9,7 @@ PackageManager::PackageManager(QWidget *parent, QString device) :
 
     model = new QStringListModel(this);
 
-    adb = new QProcess();
-    currentDevice = device;
+    adb = std::make_shared<QProcess>();
 
     // now add data to ui
     parseData();
@@ -33,15 +32,13 @@ QString PackageManager::removeGarbage(QString string)
 
 void PackageManager::parseData()
 {
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    if(currentDevice.isEmpty())
+        return;
+
     // start process
     QString program = QString("adb -s %1 shell pm list packages -3").arg(currentDevice);
-    qDebug() << "program is: " << program;
-    adb->start(program);
-    adb->waitForFinished();
-
-    // get output data
-    QByteArray outputData = adb->readAllStandardOutput();
-
+    auto outputData = runProcess(program);
     qDebug() << outputData;
 
     int lastIndex = 0;
@@ -69,6 +66,10 @@ void PackageManager::parseData()
 
 void PackageManager::on_uninstall_clicked()
 {
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    if(currentDevice.isEmpty())
+        return;
+
     // prompt user if they want to keep data
     QMessageBox msgBox;
     msgBox.setText("Do you want to keep app data?");
@@ -78,36 +79,29 @@ void PackageManager::on_uninstall_clicked()
 
     switch (ret) {
     case QMessageBox::Yes:
-    {
-        QModelIndex index = ui->listView->currentIndex();
-        QString itemText = index.data(Qt::DisplayRole).toString();
+        {
+            QModelIndex index = ui->listView->currentIndex();
+            QString itemText = index.data(Qt::DisplayRole).toString();
 
-        // start process
-        QString program = QString("adb -s %1 uninstall -k %2").arg(currentDevice, itemText);
-        qDebug() << "program is: " << program;
-        adb->start(program);
-        adb->waitForFinished(1000);
+            // start process
+            QString program = QString("adb -s %1 uninstall -k %2").arg(currentDevice, itemText);
+            runProcess(program);
 
-        parseData();
-    }
-    break;
-
+            parseData();
+        }
+        break;
     case QMessageBox::No:
-    {
-        QModelIndex index = ui->listView->currentIndex();
-        QString itemText = index.data(Qt::DisplayRole).toString();
+        {
+            QModelIndex index = ui->listView->currentIndex();
+            QString itemText = index.data(Qt::DisplayRole).toString();
 
-        // start process
-        QString program = QString("adb -s %1 uninstall %2").arg(currentDevice, itemText);
-        qDebug() << "program is: " << program;
-        adb->start(program);
-        adb->waitForFinished(1000);
+            // start process
+            QString program = QString("adb -s %1 uninstall %2").arg(currentDevice, itemText);
+            runProcess(program);
 
-        parseData();
-    }
-    break;
-
-
+            parseData();
+        }
+        break;
     default:
         break;
     }
@@ -115,6 +109,10 @@ void PackageManager::on_uninstall_clicked()
 
 void PackageManager::on_install_clicked()
 {
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    if(currentDevice.isEmpty())
+        return;
+
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("APK Files (*.apk)"));
     qDebug() << "Selected file is: " << fileName;
@@ -124,16 +122,12 @@ void PackageManager::on_install_clicked()
     program.remove(QChar('\\', Qt::CaseInsensitive));
     qDebug() << "program is: " << program;
 
-    // create process object
-    QProcess myProcess;
-    myProcess.start(program);
-    myProcess.waitForFinished();
-
     // read adb devices data to array
-    QByteArray output = myProcess.readAllStandardOutput();
-    QByteArray badOutput = myProcess.readAllStandardError();
+    QByteArray output = runProcess(program);
     qDebug() << "output is: " << output;
-    qDebug() << "bad output is: " << badOutput;
+
+//    QByteArray badOutput = myProcess.readAllStandardError();
+//    qDebug() << "bad output is: " << badOutput;
 
     parseData();
 }

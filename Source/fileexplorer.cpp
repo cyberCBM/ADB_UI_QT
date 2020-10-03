@@ -1,7 +1,7 @@
 #include "fileexplorer.hpp"
 #include "ui_FileExplorer.h"
 
-FileExplorer::FileExplorer(QWidget *parent, QString device) :
+FileExplorer::FileExplorer(QWidget *parent) :
     QWidget(parent),
     m_UI(new Ui::FileExplorer),
     m_ShellADB(nullptr)
@@ -9,30 +9,30 @@ FileExplorer::FileExplorer(QWidget *parent, QString device) :
     m_UI->setupUi(this);
 
     model = new QStringListModel(this);
-
     gettingDir = false;
 
     // set current dir
     m_UI->currentDir->setText("/");
-
     m_ShellADB = std::make_shared<QProcess>();
-
-    currentDevice = device;
-    qDebug() << "current device is: " << currentDevice;
-
-    // start process
-    QString program = QString("adb -s %1 shell").arg(currentDevice);
-    qDebug() << "program is: " << program;
-    m_ShellADB->start(program);
 
     connect(m_ShellADB.get(), SIGNAL(readyReadStandardOutput()), this, SLOT(adbOutputReady()));
     connect(m_UI->files,SIGNAL(doubleClicked(const QModelIndex)),this,SLOT(ItemClicked(QModelIndex)));
 
-    // send ls command
-    m_ShellADB->write("clear\n");
-    m_ShellADB->write("ls -F\n");
-    m_ShellADB->waitForFinished(1000);
-    outputReady();
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    qDebug() << "current device is: " << currentDevice;
+
+    if(!currentDevice.isEmpty())
+    {
+        // start process
+        QString program = QString("adb -s %1 shell").arg(currentDevice);
+        qDebug() << "program is: " << program;
+        m_ShellADB->start(program);
+        // send ls command
+        m_ShellADB->write("clear\n");
+        m_ShellADB->write("ls -F\n");
+        m_ShellADB->waitForFinished(1000);
+        outputReady();
+    }
 }
 
 FileExplorer::~FileExplorer(){
@@ -157,6 +157,9 @@ void FileExplorer::on_up_clicked(bool checked)
 
 void FileExplorer::on_upload_clicked(bool checked)
 {
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    if(currentDevice.isEmpty())
+        return;
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("Any (*)"));
     qDebug() << "Selected file is: " << fileName;
@@ -175,6 +178,10 @@ void FileExplorer::on_upload_clicked(bool checked)
 
 void FileExplorer::on_download_clicked(bool checked)
 {
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    if(currentDevice.isEmpty())
+        return;
+
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                     "~/",
                                                     tr("Any (*)"));

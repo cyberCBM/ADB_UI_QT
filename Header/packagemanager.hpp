@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <memory>
+#include "utilities.hpp"
+
 
 namespace Ui {
 class PackageManager;
@@ -18,18 +20,17 @@ class PackageManager : public QWidget
     Q_OBJECT
 
 public:
-    explicit PackageManager(QWidget *parent = 0, QString device = "");
+    explicit PackageManager(QWidget *parent = 0);
     ~PackageManager();
 
 private slots:
     void on_uninstall_clicked();
-
     void on_install_clicked();
 
 private:
     Ui::PackageManager *ui;
     std::shared_ptr<QProcess> adb;
-    QString currentDevice;
+
     QStringList List;
     QStringListModel *model;
 

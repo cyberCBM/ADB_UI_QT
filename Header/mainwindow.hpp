@@ -29,11 +29,15 @@ private slots:
     void on_installPushButton_clicked();
     void on_adbShellPushButton_clicked();
     void on_uninstallPushButton_clicked();
-
     void on_browsePushButton_clicked();
 
+
+    void on_adbPathTE_textChanged(const QString &arg1);
+
+    void on_deviceComboBox_currentIndexChanged(const QString &arg1);
+
 private:
-    std::unique_ptr<Ui::MainWindow> m_UI;
+    Ui::MainWindow *m_UI;
     std::unique_ptr<QProcess> m_Shell;
 };
 

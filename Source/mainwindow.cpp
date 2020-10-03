@@ -12,22 +12,21 @@ MainWindow::MainWindow(QWidget *parent) :
     m_UI(new Ui::MainWindow)
 {
     m_UI->setupUi(this);
+    SettingManager::setValue("ADB_DEVICES", "");
     getConnectedDevices();
 }
 
 MainWindow::~MainWindow()
 {
-
+    delete m_UI;
 }
 
 void MainWindow::getConnectedDevices()
 {
     m_UI->deviceComboBox->clear();
-
     // create process object
 
-
-    auto adbStr = m_UI->adbPathTE->text();
+    QString adbStr = SettingManager::value(ADB_PATH).toString();
     checkADBPath(adbStr, this);
 
     QString adbCMD = m_UI->adbPathTE->text() + "/adb devices";
@@ -43,8 +42,10 @@ void MainWindow::getConnectedDevices()
         auto tind = output.indexOf("\t", nind);
         if(nind!= -1 && tind!= -1)
         {
-            //outputData << output.mid(nind, tind);
-            m_UI->deviceComboBox->addItem(output.mid(nind+1, (tind-nind)-1));
+            auto device = output.mid(nind+1, (tind-nind)-1);
+            if(lastItem==0)
+                SettingManager::setValue(ADB_DEVICE, device);
+            m_UI->deviceComboBox->addItem(device);
         }
         lastItem = tind;
     }
@@ -67,7 +68,7 @@ void MainWindow::showError()
 
 void MainWindow::on_explorePushButton_clicked()
 {
-    FileExplorer *explorer = new FileExplorer(0, m_UI->deviceComboBox->currentText());
+    FileExplorer *explorer = new FileExplorer(0);
     explorer->show();
 }
 
@@ -77,13 +78,16 @@ void MainWindow::on_installPushButton_clicked()
                                                     tr("Any"), "~/", tr("APK Files (*.apk)"));
     qDebug() << "Selected file is: " << fileName;
 
-    QString program = QString("adb -s %1 install \"%2\"").arg(m_UI->deviceComboBox->currentText(), fileName);
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    if(currentDevice.isEmpty())
+        return;
+    QString program = QString("adb -s %1 install \"%2\"").arg(currentDevice, fileName);
     qDebug() << "program is: " << program;
 
     // read adb devices data to array
     auto output = runProcess(program);
-
-    qDebug() << "output is: " << output;
+    qDebug() << "output is: " << output; // if empty then need to show error
+    // TODO: implment UI logger
 
     //QByteArray badOutput = myProcess.readAllStandardError();
     //qDebug() << "bad output is: " << badOutput;
@@ -91,13 +95,13 @@ void MainWindow::on_installPushButton_clicked()
 
 void MainWindow::on_adbShellPushButton_clicked()
 {
-    ShellTerm *shell = new ShellTerm(0, m_UI->deviceComboBox->currentText());
+    ShellTerm *shell = new ShellTerm(0);
     shell->show();
 }
 
 void MainWindow::on_uninstallPushButton_clicked()
 {
-    PackageManager *pm = new PackageManager(0, m_UI->deviceComboBox->currentText());
+    PackageManager *pm = new PackageManager(0);
     pm->show();
 }
 
@@ -113,4 +117,14 @@ void MainWindow::on_browsePushButton_clicked()
                                                          QFileDialog::ShowDirsOnly|QFileDialog::DontResolveSymlinks);
     m_UI->adbPathTE->setText(filePath);
 
+}
+
+void MainWindow::on_adbPathTE_textChanged(const QString &arg1)
+{
+    SettingManager::setValue(ADB_PATH, arg1);
+}
+
+void MainWindow::on_deviceComboBox_currentIndexChanged(const QString &arg1)
+{
+    SettingManager::setValue(ADB_DEVICE, arg1);
 }

@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <memory>
+#include "utilities.hpp"
 
 namespace Ui {
 class FileExplorer;
@@ -19,7 +20,7 @@ class FileExplorer : public QWidget
     Q_OBJECT
 
 public:
-    explicit FileExplorer(QWidget *parent = 0, QString device = "");
+    explicit FileExplorer(QWidget *parent = 0);
     ~FileExplorer();
     QString substring(QString string, int start, int end);
     QString removeUnessaryChars(QString str);
@@ -38,7 +39,6 @@ private slots:
 private:
     Ui::FileExplorer *m_UI;
     std::shared_ptr<QProcess> m_ShellADB;
-    QString currentDevice;
     QStringListModel *model;
     QStringList List;
     bool gettingDir;

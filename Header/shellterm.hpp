@@ -4,6 +4,8 @@
 #include <QProcess>
 #include <QDebug>
 #include <QScrollBar>
+#include <memory>
+#include "utilities.hpp"
 
 namespace Ui {
 class ShellTerm;
@@ -14,7 +16,7 @@ class ShellTerm : public QWidget
     Q_OBJECT
 
 public:
-    explicit ShellTerm(QWidget *parent = 0, QString device = "");
+    explicit ShellTerm(QWidget *parent = 0);
     ~ShellTerm();
 
 private slots:
@@ -25,9 +27,8 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
-    QProcess *shell;
+    std::shared_ptr<QProcess> shell;
     Ui::ShellTerm *ui;
-    QString currentDevice;
     QByteArray outputData;
     int positionOfCommand;
 };

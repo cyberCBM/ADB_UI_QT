@@ -3,8 +3,13 @@
 #include <QString>
 #include <QMessageBox>
 #include <QProcess>
+#include <settingmanager.hpp>
 
-void checkADBPath(const QString &adbPath, QWidget* widget) {
+#define ADB_PATH "ADB_PATH"
+#define ADB_DEVICE "ADB_DEVICE"
+
+
+inline void checkADBPath(const QString &adbPath, QWidget* widget) {
     if(adbPath.isEmpty()) {
         QMessageBox *msgBox = new QMessageBox(widget);
         msgBox->setText("ADB Setting");
@@ -15,7 +20,7 @@ void checkADBPath(const QString &adbPath, QWidget* widget) {
     }
 }
 
-QByteArray runProcess(const QString &argument) {
+inline QByteArray runProcess(const QString &argument) {
     QProcess myProcess;
     myProcess.setProgram(argument);
     myProcess.start();

@@ -13,14 +13,16 @@ SOURCES += \
     Source/main.cpp \
     Source/mainwindow.cpp \
     Source/packagemanager.cpp \
-    Source/shellterm.cpp
+    Source/shellterm.cpp \
+    Source/settingmanager.cpp
 
 HEADERS += \
     Header/mainwindow.hpp \
     Header/fileexplorer.hpp \
     Header/packagemanager.hpp \
     Header/shellterm.hpp \
-    Header/utilities.hpp
+    Header/utilities.hpp \
+    Header/settingmanager.hpp
 
 FORMS += \
     UIView/FileExplorer.ui \
