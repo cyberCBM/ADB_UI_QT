@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_UI(new Ui::MainWindow)
 {
     m_UI->setupUi(this);
-    SettingManager::setValue("ADB_DEVICES", "");
+    auto adbStr = SettingManager::value(ADB_PATH).toString();
+    m_UI->adbPathTE->setText(adbStr);
     getConnectedDevices();
 }
 
@@ -29,9 +30,11 @@ void MainWindow::getConnectedDevices()
     QString adbStr = SettingManager::value(ADB_PATH).toString();
     checkADBPath(adbStr, this);
 
-    QString adbCMD = m_UI->adbPathTE->text() + "/adb devices";
+    QString adbCMD = adbStr + "/adb devices";
+    qDebug() << "output is: " << adbCMD;
+    QByteArray output = runProcess(adbCMD);
 
-    auto output = runProcess(adbCMD);
+    //auto output = runProcess(adbCMD);
     qDebug() << "output is: " << output;
 
     // now parse devices

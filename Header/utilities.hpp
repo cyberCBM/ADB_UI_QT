@@ -22,9 +22,11 @@ inline void checkADBPath(const QString &adbPath, QWidget* widget) {
 
 inline QByteArray runProcess(const QString &argument) {
     QProcess myProcess;
-    myProcess.setProgram(argument);
-    myProcess.start();
+    myProcess.start(argument);
     myProcess.waitForFinished();
     // read adb devices data to array
-    return myProcess.readAllStandardOutput();
+    QByteArray output = myProcess.readAllStandardOutput();
+    if(output.isEmpty())
+        output = myProcess.readAllStandardError();
+    return output;
 }
