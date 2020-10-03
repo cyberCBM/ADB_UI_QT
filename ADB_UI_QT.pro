@@ -14,7 +14,8 @@ SOURCES += \
     Source/mainwindow.cpp \
     Source/packagemanager.cpp \
     Source/shellterm.cpp \
-    Source/settingmanager.cpp
+    Source/settingmanager.cpp \
+    Source/aboutdialog.cpp
 
 HEADERS += \
     Header/mainwindow.hpp \
@@ -22,13 +23,15 @@ HEADERS += \
     Header/packagemanager.hpp \
     Header/shellterm.hpp \
     Header/utilities.hpp \
-    Header/settingmanager.hpp
+    Header/settingmanager.hpp \
+    Header/aboutdialog.hpp
 
 FORMS += \
     UIView/FileExplorer.ui \
     UIView/PackageManager.ui \
     UIView/ShellTerm.ui \
-    UIView/mainwindow.ui
+    UIView/about.ui \
+    UIView/mainwindow.ui \  
 
 TRANSLATIONS += \
     ADB_UI_QT_en_IN.ts

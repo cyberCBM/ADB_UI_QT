@@ -3,6 +3,7 @@
 #include "shellterm.hpp"
 #include "fileexplorer.hpp"
 #include "packagemanager.hpp"
+#include "aboutdialog.hpp"
 #include "utilities.hpp"
 
 #include <iostream>
@@ -12,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_UI(new Ui::MainWindow)
 {
     m_UI->setupUi(this);
+
     auto adbStr = SettingManager::value(ADB_PATH).toString();
     m_UI->adbPathTE->setText(adbStr);
     getConnectedDevices();
@@ -130,4 +132,30 @@ void MainWindow::on_adbPathTE_textChanged(const QString &arg1)
 void MainWindow::on_deviceComboBox_currentIndexChanged(const QString &arg1)
 {
     SettingManager::setValue(ADB_DEVICE, arg1);
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutDialog *about= new AboutDialog(new QDialog(this));
+    about->show();
+}
+
+void MainWindow::on_actionExplore_triggered()
+{
+    on_explorePushButton_clicked();
+}
+
+void MainWindow::on_actionInstall_triggered()
+{
+    on_installPushButton_clicked();
+}
+
+void MainWindow::on_actionShell_triggered()
+{
+    on_adbShellPushButton_clicked();
+}
+
+void MainWindow::on_actionUninstall_triggered()
+{
+    on_uninstallPushButton_clicked();
 }

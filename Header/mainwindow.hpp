@@ -36,6 +36,16 @@ private slots:
 
     void on_deviceComboBox_currentIndexChanged(const QString &arg1);
 
+    void on_actionAbout_triggered();
+
+    void on_actionExplore_triggered();
+
+    void on_actionInstall_triggered();
+
+    void on_actionShell_triggered();
+
+    void on_actionUninstall_triggered();
+
 private:
     Ui::MainWindow *m_UI;
     std::unique_ptr<QProcess> m_Shell;

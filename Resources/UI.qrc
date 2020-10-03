@@ -7,5 +7,6 @@
         <file>Shell.png</file>
         <file>adbSetting.png</file>
         <file>back.png</file>
+        <file>adbAbout.png</file>
     </qresource>
 </RCC>
