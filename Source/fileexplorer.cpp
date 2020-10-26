@@ -21,10 +21,13 @@ FileExplorer::FileExplorer(QWidget *parent) :
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
     qDebug() << "current device is: " << currentDevice;
 
+    QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+    checkADBPath(adbPathStr, this);
+
     if(!currentDevice.isEmpty())
     {
         // start process
-        QString program = QString("adb -s %1 shell").arg(currentDevice);
+        QString program = QString("%1/adb -s %2 shell").arg(adbPathStr, currentDevice);
         qDebug() << "program is: " << program;
         m_ShellADB->start(program);
         // send ls command
@@ -160,12 +163,16 @@ void FileExplorer::on_upload_clicked(bool checked)
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
     if(currentDevice.isEmpty())
         return;
+
+    QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+    checkADBPath(adbPathStr, this);
+
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("Any (*)"));
     qDebug() << "Selected file is: " << fileName;
 
     // now create new process to upload file
-    QString adbCommand = QString("adb -s %1 push \"%2\" \"%3\"").arg(currentDevice, fileName, substring(m_UI->currentDir->text(), 0, m_UI->currentDir->text().size()-1));
+    QString adbCommand = QString("%1/adb -s %2 push \"%3\" \"%4\"").arg(adbPathStr, currentDevice, fileName, substring(m_UI->currentDir->text(), 0, m_UI->currentDir->text().size()-1));
     qDebug() << "program is: " << adbCommand;
     m_ShellADB->start(adbCommand);
 
@@ -182,6 +189,9 @@ void FileExplorer::on_download_clicked(bool checked)
     if(currentDevice.isEmpty())
         return;
 
+    QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+    checkADBPath(adbPathStr, this);
+
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                     "~/",
                                                     tr("Any (*)"));
@@ -191,7 +201,7 @@ void FileExplorer::on_download_clicked(bool checked)
     QModelIndex index = m_UI->files->currentIndex();
     QString itemText = index.data(Qt::DisplayRole).toString();
     QString filePath = substring(m_UI->currentDir->text(), 0, m_UI->currentDir->text().size()-1) + "/" + substring(itemText, 1, itemText.size());
-    QString adbCommand = QString("adb -s %1 pull \"%2\" \"%3\"").arg(currentDevice, filePath, fileName);
+    QString adbCommand = QString("%1/adb -s %2 pull \"%3\" \"%4\"").arg(adbPathStr, currentDevice, filePath, fileName);
     qDebug() << "program is: " << adbCommand;
     m_ShellADB->start(adbCommand);
 }

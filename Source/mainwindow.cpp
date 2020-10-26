@@ -5,6 +5,7 @@
 #include "packagemanager.hpp"
 #include "aboutdialog.hpp"
 #include "utilities.hpp"
+#include "apkdragdropwidget.hpp"
 
 #include <iostream>
 
@@ -17,11 +18,18 @@ MainWindow::MainWindow(QWidget *parent) :
     auto adbStr = SettingManager::value(ADB_PATH).toString();
     m_UI->adbPathTE->setText(adbStr);
     getConnectedDevices();
+
+    customDropWidget = new apkDragDropWidget(m_UI->installGroupBox);
+    m_UI->installHLayout->addWidget(customDropWidget);
+
+
+    //setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow()
 {
     delete m_UI;
+    delete customDropWidget;
 }
 
 void MainWindow::getConnectedDevices()
@@ -29,11 +37,11 @@ void MainWindow::getConnectedDevices()
     m_UI->deviceComboBox->clear();
     // create process object
 
-    QString adbStr = SettingManager::value(ADB_PATH).toString();
-    checkADBPath(adbStr, this);
+    QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+    checkADBPath(adbPathStr, this);
 
-    QString adbCMD = adbStr + "/adb devices";
-    qDebug() << "output is: " << adbCMD;
+    QString adbCMD = adbPathStr + "/adb devices";
+    qDebug() << "program is: " << adbCMD;
     QByteArray output = runProcess(adbCMD);
 
     //auto output = runProcess(adbCMD);
@@ -57,45 +65,10 @@ void MainWindow::getConnectedDevices()
 
 }
 
-// show right message
-void MainWindow::showStandard()
-{
-    //QByteArray strdata = myProcess.readAllStandardOutput();
-    //qDebug() << "standard: " << strdata;
-}
-
-// show wrong message
-void MainWindow::showError()
-{
-    //QByteArray strdata = myProcess.readAllStandardError();
-    //qDebug() << "error: " << strdata;
-}
-
 void MainWindow::on_explorePushButton_clicked()
 {
     FileExplorer *explorer = new FileExplorer(0);
     explorer->show();
-}
-
-void MainWindow::on_installPushButton_clicked()
-{
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("Any"), "~/", tr("APK Files (*.apk)"));
-    qDebug() << "Selected file is: " << fileName;
-
-    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
-    if(currentDevice.isEmpty())
-        return;
-    QString program = QString("adb -s %1 install \"%2\"").arg(currentDevice, fileName);
-    qDebug() << "program is: " << program;
-
-    // read adb devices data to array
-    auto output = runProcess(program);
-    qDebug() << "output is: " << output; // if empty then need to show error
-    // TODO: implment UI logger
-
-    //QByteArray badOutput = myProcess.readAllStandardError();
-    //qDebug() << "bad output is: " << badOutput;
 }
 
 void MainWindow::on_adbShellPushButton_clicked()
@@ -147,7 +120,23 @@ void MainWindow::on_actionExplore_triggered()
 
 void MainWindow::on_actionInstall_triggered()
 {
-    on_installPushButton_clicked();
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Any"), "~/", tr("APK Files (*.apk)"));
+    qDebug() << "Selected file is: " << fileName;
+
+    QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
+    if(currentDevice.isEmpty())
+        return;
+    QString program = QString("adb -s %1 install \"%2\"").arg(currentDevice, fileName);
+    qDebug() << "program is: " << program;
+
+    // read adb devices data to array
+    auto output = runProcess(program);
+    qDebug() << "output is: " << output; // if empty then need to show error
+    // TODO: implment UI logger
+
+    //QByteArray badOutput = myProcess.readAllStandardError();
+    //qDebug() << "bad output is: " << badOutput;
 }
 
 void MainWindow::on_actionShell_triggered()

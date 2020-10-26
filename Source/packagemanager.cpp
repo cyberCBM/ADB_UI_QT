@@ -36,8 +36,11 @@ void PackageManager::parseData()
     if(currentDevice.isEmpty())
         return;
 
+    QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+    checkADBPath(adbPathStr, this);
+
     // start process
-    QString program = QString("adb -s %1 shell pm list packages -3").arg(currentDevice);
+    QString program = QString("%1/adb -s %2 shell pm list packages -3").arg(adbPathStr, currentDevice);
     auto outputData = runProcess(program);
     qDebug() << outputData;
 
@@ -77,6 +80,9 @@ void PackageManager::on_uninstall_clicked()
     msgBox.setDefaultButton(QMessageBox::Yes);
     int ret = msgBox.exec();
 
+    QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+    checkADBPath(adbPathStr, this);
+
     switch (ret) {
     case QMessageBox::Yes:
         {
@@ -84,7 +90,7 @@ void PackageManager::on_uninstall_clicked()
             QString itemText = index.data(Qt::DisplayRole).toString();
 
             // start process
-            QString program = QString("adb -s %1 uninstall -k %2").arg(currentDevice, itemText);
+            QString program = QString("%1/adb -s %2 uninstall -k %3").arg(adbPathStr, currentDevice, itemText);
             runProcess(program);
 
             parseData();
@@ -96,7 +102,7 @@ void PackageManager::on_uninstall_clicked()
             QString itemText = index.data(Qt::DisplayRole).toString();
 
             // start process
-            QString program = QString("adb -s %1 uninstall %2").arg(currentDevice, itemText);
+            QString program = QString("%1/adb -s %2 uninstall %3").arg(adbPathStr, currentDevice, itemText);
             runProcess(program);
 
             parseData();
@@ -113,11 +119,14 @@ void PackageManager::on_install_clicked()
     if(currentDevice.isEmpty())
         return;
 
+    QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+    checkADBPath(adbPathStr, this);
+
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("APK Files (*.apk)"));
     qDebug() << "Selected file is: " << fileName;
 
-    QString program = QString("adb -s %1 install \"%2\"").arg(currentDevice, fileName);
+    QString program = QString("%1/adb -s %2 install \"%3\"").arg(adbPathStr, currentDevice, fileName);
     program.remove(QRegExp("[\\n\\t\\r]"));
     program.remove(QChar('\\', Qt::CaseInsensitive));
     qDebug() << "program is: " << program;

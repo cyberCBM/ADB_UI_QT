@@ -15,9 +15,11 @@ SOURCES += \
     Source/packagemanager.cpp \
     Source/shellterm.cpp \
     Source/settingmanager.cpp \
-    Source/aboutdialog.cpp
+    Source/aboutdialog.cpp \
+    Source/apkdragdropwidget.cpp
 
 HEADERS += \
+    Header/apkdragdropwidget.hpp \
     Header/mainwindow.hpp \
     Header/fileexplorer.hpp \
     Header/packagemanager.hpp \
@@ -31,6 +33,7 @@ FORMS += \
     UIView/PackageManager.ui \
     UIView/ShellTerm.ui \
     UIView/about.ui \
+    UIView/apkdragdropwidget.ui \
     UIView/mainwindow.ui \  
 
 TRANSLATIONS += \

@@ -13,8 +13,11 @@ ShellTerm::ShellTerm(QWidget *parent) :
 
     if(!currentDevice.isEmpty())
     {
+        QString adbPathStr = SettingManager::value(ADB_PATH).toString();
+        checkADBPath(adbPathStr, this);
+
         // start process
-        QString program = QString("adb -s %1 ShellTerm").arg(currentDevice);
+        QString program = QString("%1/adb -s %2 ShellTerm").arg(adbPathStr, currentDevice);
         outputData = runProcess(program);
         outputData += "~ \n";
         ui->terminal->setText(QString(outputData));
