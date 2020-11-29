@@ -20,7 +20,7 @@ public:
     ~apkDragDropWidget();
 
 private:
-    Ui::apkDragDropWidget *ui;
+    Ui::apkDragDropWidget *m_UI;
     void installAPKFile(const QString& filename);
 
 protected:

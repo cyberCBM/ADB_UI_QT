@@ -19,8 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_UI->adbPathTE->setText(adbStr);
     getConnectedDevices();
 
-    customDropWidget = new apkDragDropWidget(m_UI->installGroupBox);
-    m_UI->installHLayout->addWidget(customDropWidget);
+    m_customDropWidget = new apkDragDropWidget(m_UI->installGroupBox);
+    m_UI->installHLayout->addWidget(m_customDropWidget);
 
 
     //setAcceptDrops(true);
@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete m_UI;
-    delete customDropWidget;
+    delete m_customDropWidget;
 }
 
 void MainWindow::getConnectedDevices()
@@ -127,7 +127,7 @@ void MainWindow::on_actionInstall_triggered()
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
     if(currentDevice.isEmpty())
         return;
-    QString program = QString("adb -s %1 install \"%2\"").arg(currentDevice, fileName);
+    QString program = QString("adb -s %1 install %2").arg(currentDevice, fileName);
     qDebug() << "program is: " << program;
 
     // read adb devices data to array

@@ -3,13 +3,13 @@
 
 PackageManager::PackageManager(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::PackageManager)
+    m_UI(new Ui::PackageManager)
 {
-    ui->setupUi(this);
+    m_UI->setupUi(this);
 
-    model = new QStringListModel(this);
+    m_slModel = new QStringListModel(this);
 
-    adb = std::make_shared<QProcess>();
+    m_ADBProcess = std::make_shared<QProcess>();
 
     // now add data to ui
     parseData();
@@ -17,10 +17,10 @@ PackageManager::PackageManager(QWidget *parent) :
 
 PackageManager::~PackageManager()
 {
-    delete ui;
+    delete m_UI;
 }
 
-QString PackageManager::substring(QString string, int start, int end)
+QString PackageManager::substring(const QString &string, int start, int end)
 {
     return string.mid(start, end-start);
 }
@@ -47,7 +47,7 @@ void PackageManager::parseData()
     int lastIndex = 0;
 
     // reset List
-    List.clear();
+    m_stringList.clear();
 
     // parse data into list
     for(int i = 0; i < outputData.size(); i++)
@@ -57,13 +57,13 @@ void PackageManager::parseData()
             QString string = substring(QString(outputData), lastIndex, i);
             string = removeGarbage(string);
             lastIndex = i;
-            List << string;
+            m_stringList << string;
         }
     }
 
     // set model list
-    model->setStringList(List);
-    ui->listView->setModel(model);
+    m_slModel->setStringList(m_stringList);
+    m_UI->listView->setModel(m_slModel);
 
 }
 
@@ -86,7 +86,7 @@ void PackageManager::on_uninstall_clicked()
     switch (ret) {
     case QMessageBox::Yes:
         {
-            QModelIndex index = ui->listView->currentIndex();
+            QModelIndex index = m_UI->listView->currentIndex();
             QString itemText = index.data(Qt::DisplayRole).toString();
 
             // start process
@@ -98,7 +98,7 @@ void PackageManager::on_uninstall_clicked()
         break;
     case QMessageBox::No:
         {
-            QModelIndex index = ui->listView->currentIndex();
+            QModelIndex index = m_UI->listView->currentIndex();
             QString itemText = index.data(Qt::DisplayRole).toString();
 
             // start process
@@ -125,18 +125,23 @@ void PackageManager::on_install_clicked()
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("APK Files (*.apk)"));
     qDebug() << "Selected file is: " << fileName;
-
-    QString program = QString("%1/adb -s %2 install \"%3\"").arg(adbPathStr, currentDevice, fileName);
-    program.remove(QRegExp("[\\n\\t\\r]"));
-    program.remove(QChar('\\', Qt::CaseInsensitive));
+    // this one manages the upgrade
+    QString program = QString("%1/adb -s %2 install %3").arg(adbPathStr, currentDevice, fileName);
     qDebug() << "program is: " << program;
 
     // read adb devices data to array
     QByteArray output = runProcess(program);
     qDebug() << "output is: " << output;
+    // reinstall and downgrade
+    if(!output.contains("Success"))
+    {
+        QString program = QString("%1/adb -s %2 install -r -d %3").arg(adbPathStr, currentDevice, fileName);
+        qDebug() << "program is: " << program;
 
-//    QByteArray badOutput = myProcess.readAllStandardError();
-//    qDebug() << "bad output is: " << badOutput;
+        // read adb devices data to array
+        auto output = runProcess(program);
+        qDebug() << "output is: " << output; // if empty then need to show error
+    }
 
     parseData();
 }

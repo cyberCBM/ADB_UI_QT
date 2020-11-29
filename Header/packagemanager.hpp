@@ -28,14 +28,14 @@ private slots:
     void on_install_clicked();
 
 private:
-    Ui::PackageManager *ui;
-    std::shared_ptr<QProcess> adb;
+    Ui::PackageManager *m_UI;
+    std::shared_ptr<QProcess> m_ADBProcess;
 
-    QStringList List;
-    QStringListModel *model;
+    QStringList m_stringList;
+    QStringListModel *m_slModel;
 
     void parseData();
-    QString substring(QString string, int start, int end);
+    QString substring(const QString &string, int start, int end);
     QString removeGarbage(QString string);
 };
 

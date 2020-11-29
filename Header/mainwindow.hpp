@@ -39,8 +39,8 @@ private slots:
 
 private:
     Ui::MainWindow *m_UI;
-    apkDragDropWidget* customDropWidget;
-    std::unique_ptr<QProcess> m_Shell;
+    apkDragDropWidget* m_customDropWidget;
+    std::unique_ptr<QProcess> m_shellProcess;
 };
 
 #endif // MAINWINDOW_H

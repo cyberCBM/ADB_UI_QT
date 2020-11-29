@@ -27,8 +27,8 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
-    std::shared_ptr<QProcess> shell;
-    Ui::ShellTerm *ui;
-    QByteArray outputData;
-    int positionOfCommand;
+    std::shared_ptr<QProcess> m_shellProcess;
+    Ui::ShellTerm *m_UI;
+    QByteArray m_outputData;
+    int m_positionOfCommand;
 };

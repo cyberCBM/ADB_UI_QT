@@ -11,20 +11,20 @@
 
 apkDragDropWidget::apkDragDropWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::apkDragDropWidget)
+    m_UI(new Ui::apkDragDropWidget)
 {
-    ui->setupUi(this);
+    m_UI->setupUi(this);
     setAcceptDrops(true);
 }
 
 apkDragDropWidget::~apkDragDropWidget()
 {
-    delete ui;
+    delete m_UI;
 }
 
 void apkDragDropWidget::dropEvent(QDropEvent *event)
 {
-    ui->label->setText("Installing APK");
+    m_UI->label->setText("Installing APK");
     setStyleSheet ("background-color: rgba(255, 0, 0, 0.2);");
     event->accept ();
 
@@ -59,14 +59,23 @@ void apkDragDropWidget::installAPKFile(const QString& fileName)
 
     QString adbPathStr = SettingManager::value(ADB_PATH).toString();
     checkADBPath(adbPathStr, this);
-
-    QString program = QString("%1/adb -s %2 install \"%3\"").arg(adbPathStr, currentDevice, fileName);
+    // this command can manage the upgrade of install but not downgrade
+    QString program = QString("%1/adb -s %2 install %3").arg(adbPathStr, currentDevice, fileName);
     qDebug() << "program is: " << program;
 
     // read adb devices data to array
     auto output = runProcess(program);
     qDebug() << "output is: " << output; // if empty then need to show error
+    if(!output.contains("Success"))
+    {
+        // reinstall or downgrade the same package
+        QString program = QString("%1/adb -s %2 install -r -d %3").arg(adbPathStr, currentDevice, fileName);
+        qDebug() << "program is: " << program;
 
-    ui->label->setText("Drag APK to Install");
+        // read adb devices data to array
+        auto output = runProcess(program);
+        qDebug() << "output is: " << output; // if empty then need to show error
+    }
+    m_UI->label->setText("Drag APK to Install");
     setStyleSheet ("background-color: rgba(255, 0, 0, 0);");
 }

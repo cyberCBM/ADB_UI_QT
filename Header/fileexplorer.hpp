@@ -22,24 +22,28 @@ class FileExplorer : public QWidget
 public:
     explicit FileExplorer(QWidget *parent = 0);
     ~FileExplorer();
-    QString substring(QString string, int start, int end);
-    QString removeUnessaryChars(QString str);
+    QString substring(const QString &str, int start, int end);
+    QString removeUnessaryChars(const QString &str);
 
 private slots:
     void outputReady();
     void adbOutputReady();
     void ItemClicked (QModelIndex index );
 
-    void on_up_clicked(bool checked);
-    void on_upload_clicked(bool checked);
-    void on_download_clicked(bool checked);
-    void on_delete_2_clicked(bool checked);
-    void on_rename_clicked(bool checked);
+    void on_up_clicked();
+    void on_upload_clicked();
+    void on_download_clicked();
+    void on_rename_clicked();
+    void on_go_clicked();
+    void on_deleteBtn_clicked();
 
 private:
     Ui::FileExplorer *m_UI;
-    std::shared_ptr<QProcess> m_ShellADB;
-    QStringListModel *model;
-    QStringList List;
-    bool gettingDir;
+    std::shared_ptr<QProcess> m_shellProcess;
+    std::shared_ptr<QProcess> m_ADBProcess;
+    QStringListModel *m_slModel;
+    QStringList m_stringList;
+
+    void getDirectory();
+    void goToDirectory(QString& path);
 };

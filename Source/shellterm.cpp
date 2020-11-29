@@ -3,11 +3,12 @@
 
 ShellTerm::ShellTerm(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ShellTerm)
+    m_UI(new Ui::ShellTerm),
+    m_shellProcess(nullptr)
 {
-    ui->setupUi(this);
+    m_UI->setupUi(this);
 
-    shell = std::shared_ptr<QProcess>();
+    m_shellProcess = std::shared_ptr<QProcess>();
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
     qDebug() << "current device is: " << currentDevice;
 
@@ -18,49 +19,49 @@ ShellTerm::ShellTerm(QWidget *parent) :
 
         // start process
         QString program = QString("%1/adb -s %2 ShellTerm").arg(adbPathStr, currentDevice);
-        outputData = runProcess(program);
-        outputData += "~ \n";
-        ui->terminal->setText(QString(outputData));
+        m_outputData = runProcess(program);
+        m_outputData += "~ \n";
+        m_UI->terminal->setText(QString(m_outputData));
     }
 
-    connect(shell.get(), SIGNAL(readyReadStandardOutput()), this, SLOT(outputReady()));
-    connect(shell.get(), SIGNAL(readyReadErrorOutput()), this, SLOT(outputReady()));
+    connect(m_shellProcess.get(), SIGNAL(readyReadStandardOutput()), this, SLOT(outputReady()));
+    connect(m_shellProcess.get(), SIGNAL(readyReadErrorOutput()), this, SLOT(outputReady()));
 }
 
 ShellTerm::~ShellTerm()
 {
-    delete ui;
+    delete m_UI;
 }
 
 void ShellTerm::outputReady()
 {
-    outputData += shell->readAllStandardOutput();
+    m_outputData += m_shellProcess->readAllStandardOutput();
 
     // append outputData
-    outputData += "~ " + ui->command->text() + "\n";
+    m_outputData += "~ " + m_UI->command->text() + "\n";
 
-    ui->terminal->setText(QString(outputData));
-    ui->terminal->verticalScrollBar()->setSliderPosition(ui->terminal->verticalScrollBar()->maximum());
+    m_UI->terminal->setText(QString(m_outputData));
+    m_UI->terminal->verticalScrollBar()->setSliderPosition(m_UI->terminal->verticalScrollBar()->maximum());
 
-    qDebug() << outputData;
+    qDebug() << m_outputData;
 }
 
 void ShellTerm::on_send_clicked()
 {
-    QByteArray dataToSend = ui->command->text().toLocal8Bit();
+    QByteArray dataToSend = m_UI->command->text().toLocal8Bit();
     dataToSend.append("\n");
 
     // append outputData
-    outputData += "~ " + ui->command->text() + "\n";
+    m_outputData += "~ " + m_UI->command->text() + "\n";
 
-    ui->terminal->setText(QString(outputData));
-    ui->terminal->verticalScrollBar()->setSliderPosition(ui->terminal->verticalScrollBar()->maximum());
+    m_UI->terminal->setText(QString(m_outputData));
+    m_UI->terminal->verticalScrollBar()->setSliderPosition(m_UI->terminal->verticalScrollBar()->maximum());
 
     qDebug() << "data is: " << dataToSend;
-    shell->write(dataToSend);
+    m_shellProcess->write(dataToSend);
 }
 
 void ShellTerm::closeEvent(QCloseEvent *event)
 {
-    outputData.clear();
+    m_outputData.clear();
 }
