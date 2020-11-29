@@ -38,11 +38,7 @@
       <item>
        <widget class="QPushButton" name="up">
         <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../Resources/UI.qrc">
-          <normaloff>:/UI/back.png</normaloff>:/UI/back.png</iconset>
+         <string>Back</string>
         </property>
         <property name="iconSize">
          <size>
@@ -99,8 +95,6 @@
    </layout>
   </widget>
  </widget>
- <resources>
-  <include location="../Resources/UI.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

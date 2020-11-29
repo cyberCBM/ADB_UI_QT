@@ -9,8 +9,6 @@ PackageManager::PackageManager(QWidget *parent) :
 
     m_slModel = new QStringListModel(this);
 
-    m_ADBProcess = std::make_shared<QProcess>();
-
     // now add data to ui
     parseData();
 }
@@ -64,7 +62,6 @@ void PackageManager::parseData()
     // set model list
     m_slModel->setStringList(m_stringList);
     m_UI->listView->setModel(m_slModel);
-
 }
 
 void PackageManager::on_uninstall_clicked()

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QProcess>
 #include <QDebug>
+
 #include <vector>
 #include <memory>
 
@@ -38,9 +39,8 @@ private slots:
     void on_actionUninstall_triggered();
 
 private:
-    Ui::MainWindow *m_UI;
-    apkDragDropWidget* m_customDropWidget;
-    std::unique_ptr<QProcess> m_shellProcess;
+    Ui::MainWindow*     m_UI;
+    apkDragDropWidget*  m_customDropWidget;
 };
 
 #endif // MAINWINDOW_H

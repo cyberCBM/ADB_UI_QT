@@ -3,12 +3,12 @@
 
 ShellTerm::ShellTerm(QWidget *parent) :
     QWidget(parent),
-    m_UI(new Ui::ShellTerm),
-    m_shellProcess(nullptr)
+    m_shellProcess(nullptr),
+    m_UI(new Ui::ShellTerm)
 {
     m_UI->setupUi(this);
 
-    m_shellProcess = std::shared_ptr<QProcess>();
+    m_shellProcess = std::make_shared<QProcess>();
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
     qDebug() << "current device is: " << currentDevice;
 
@@ -18,8 +18,9 @@ ShellTerm::ShellTerm(QWidget *parent) :
         checkADBPath(adbPathStr, this);
 
         // start process
-        QString program = QString("%1/adb -s %2 ShellTerm").arg(adbPathStr, currentDevice);
-        m_outputData = runProcess(program);
+        QString program = QString("%1/adb -s %2 shell").arg(adbPathStr, currentDevice);
+        m_shellProcess->start(program);
+
         m_outputData += "~ \n";
         m_UI->terminal->setText(QString(m_outputData));
     }

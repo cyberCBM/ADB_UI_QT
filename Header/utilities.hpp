@@ -3,11 +3,11 @@
 #include <QString>
 #include <QMessageBox>
 #include <QProcess>
+
 #include <settingmanager.hpp>
 
 #define ADB_PATH "ADB_PATH"
 #define ADB_DEVICE "ADB_DEVICE"
-
 
 inline void checkADBPath(const QString &adbPath, QWidget* widget) {
     if(adbPath.isEmpty()) {

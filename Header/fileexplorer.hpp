@@ -8,7 +8,9 @@
 #include <QStringListModel>
 #include <QFileDialog>
 #include <QInputDialog>
+
 #include <memory>
+
 #include "utilities.hpp"
 
 namespace Ui {
@@ -38,11 +40,11 @@ private slots:
     void on_deleteBtn_clicked();
 
 private:
-    Ui::FileExplorer *m_UI;
-    std::shared_ptr<QProcess> m_shellProcess;
-    std::shared_ptr<QProcess> m_ADBProcess;
-    QStringListModel *m_slModel;
-    QStringList m_stringList;
+    Ui::FileExplorer*           m_UI;
+    std::shared_ptr<QProcess>   m_shellProcess;
+    std::shared_ptr<QProcess>   m_ADBProcess;
+    QStringListModel*           m_slModel;
+    QStringList                 m_stringList;
 
     void getDirectory();
     void goToDirectory(QString& path);

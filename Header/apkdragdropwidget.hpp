@@ -19,15 +19,15 @@ public:
     explicit apkDragDropWidget(QWidget *parent = nullptr);
     ~apkDragDropWidget();
 
-private:
-    Ui::apkDragDropWidget *m_UI;
-    void installAPKFile(const QString& filename);
 
 protected:
-void dropEvent(QDropEvent *event) override;
-void dragEnterEvent(QDragEnterEvent *event) override;
-void dragLeaveEvent (QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragLeaveEvent (QDragLeaveEvent *event) override;
 
+private:
+    Ui::apkDragDropWidget   *m_UI;
+    void installAPKFile(const QString& filename);
 };
 
 #endif // APKDRAGDROPWIDGET_H

@@ -13,6 +13,6 @@ public:
     ~AboutDialog();
 
 private:
-    Ui::About *m_About;
+    Ui::About *m_aboutUI;
 };
 

@@ -7,9 +7,9 @@
 #include <QStringListModel>
 #include <QMessageBox>
 #include <QFileDialog>
+
 #include <memory>
 #include "utilities.hpp"
-
 
 namespace Ui {
 class PackageManager;
@@ -28,11 +28,9 @@ private slots:
     void on_install_clicked();
 
 private:
-    Ui::PackageManager *m_UI;
-    std::shared_ptr<QProcess> m_ADBProcess;
-
-    QStringList m_stringList;
-    QStringListModel *m_slModel;
+    Ui::PackageManager* m_UI;
+    QStringListModel*   m_slModel;
+    QStringList         m_stringList;
 
     void parseData();
     QString substring(const QString &string, int start, int end);

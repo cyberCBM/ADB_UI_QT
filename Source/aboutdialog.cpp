@@ -3,12 +3,12 @@
 
 AboutDialog::AboutDialog(QDialog* dialog) :
     QDialog(dialog),
-    m_About(new Ui::About)
+    m_aboutUI(new Ui::About)
 {
-    m_About->setupUi(this);
+    m_aboutUI->setupUi(this);
 }
 
 AboutDialog::~AboutDialog()
 {
-    delete m_About;
+    delete m_aboutUI;
 }

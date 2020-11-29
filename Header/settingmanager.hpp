@@ -16,6 +16,6 @@ public:
     static void setValue(const QString &key, const QVariant &value);
 
 private:
-    static SettingManager *s_instance;
-    QSettings m_settings;
+    static SettingManager*  s_instance;
+    QSettings               m_settings;
 };

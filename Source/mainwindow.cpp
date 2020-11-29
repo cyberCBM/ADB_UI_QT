@@ -7,8 +7,6 @@
 #include "utilities.hpp"
 #include "apkdragdropwidget.hpp"
 
-#include <iostream>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_UI(new Ui::MainWindow)

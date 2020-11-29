@@ -4,6 +4,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QScrollBar>
+
 #include <memory>
 #include "utilities.hpp"
 
@@ -27,8 +28,8 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
-    std::shared_ptr<QProcess> m_shellProcess;
-    Ui::ShellTerm *m_UI;
-    QByteArray m_outputData;
-    int m_positionOfCommand;
+    std::shared_ptr<QProcess>   m_shellProcess;
+    Ui::ShellTerm*              m_UI;
+    QByteArray                  m_outputData;
+    int                         m_positionOfCommand;
 };
