@@ -1,21 +1,21 @@
 #include "mainwindow.hpp"
 
 #include <QApplication>
-#include <QIcon>
+
 #include <settingmanager.hpp>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    a.setOrganizationName("CyberCBM");
-    a.setOrganizationDomain("CBM");
-    a.setApplicationName("ADB_UI_QT");
+    QApplication app(argc, argv);
+    app.setOrganizationName("CyberCBM");
+    app.setOrganizationDomain("CBM");
+    app.setApplicationName("ADB_UI_QT");
 
     SettingManager settings;
 
-    MainWindow w;
-    w.setWindowTitle("ADB_UI_QT");
-    w.show();
+    MainWindow window;
+    window.setWindowTitle("ADB_UI_QT");
+    window.show();
 
-    return a.exec();
+    return app.exec();
 }

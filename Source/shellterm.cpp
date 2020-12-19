@@ -26,7 +26,7 @@ ShellTerm::ShellTerm(QWidget *parent) :
     }
 
     connect(m_shellProcess.get(), SIGNAL(readyReadStandardOutput()), this, SLOT(outputReady()));
-    connect(m_shellProcess.get(), SIGNAL(readyReadErrorOutput()), this, SLOT(outputReady()));
+    //connect(m_shellProcess.get(), SIGNAL(readyReadErrorOutput()), this, SLOT(outputReady()));
 }
 
 ShellTerm::~ShellTerm()
