@@ -10,7 +10,7 @@ ShellTerm::ShellTerm(QWidget *parent) :
 
     m_shellProcess = std::make_shared<QProcess>();
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
-    qDebug() << "current device is: " << currentDevice;
+    //qDebug() << "current device is: " << currentDevice;
 
     if(!currentDevice.isEmpty())
     {
@@ -44,7 +44,7 @@ void ShellTerm::outputReady()
     m_UI->terminal->setText(QString(m_outputData));
     m_UI->terminal->verticalScrollBar()->setSliderPosition(m_UI->terminal->verticalScrollBar()->maximum());
 
-    qDebug() << m_outputData;
+    //qDebug() << m_outputData;
 }
 
 void ShellTerm::on_send_clicked()
@@ -58,7 +58,7 @@ void ShellTerm::on_send_clicked()
     m_UI->terminal->setText(QString(m_outputData));
     m_UI->terminal->verticalScrollBar()->setSliderPosition(m_UI->terminal->verticalScrollBar()->maximum());
 
-    qDebug() << "data is: " << dataToSend;
+    //qDebug() << "data is: " << dataToSend;
     m_shellProcess->write(dataToSend);
 }
 

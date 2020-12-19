@@ -40,7 +40,7 @@ void PackageManager::parseData()
     // start process
     QString program = QString("%1/adb -s %2 shell pm list packages -3").arg(adbPathStr, currentDevice);
     auto outputData = runProcess(program);
-    qDebug() << outputData;
+    //qDebug() << outputData;
 
     int lastIndex = 0;
 
@@ -121,23 +121,23 @@ void PackageManager::on_install_clicked()
 
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("APK Files (*.apk)"));
-    qDebug() << "Selected file is: " << fileName;
+    //qDebug() << "Selected file is: " << fileName;
     // this one manages the upgrade
     QString program = QString("%1/adb -s %2 install %3").arg(adbPathStr, currentDevice, fileName);
-    qDebug() << "program is: " << program;
+    //qDebug() << "program is: " << program;
 
     // read adb devices data to array
     QByteArray output = runProcess(program);
-    qDebug() << "output is: " << output;
+    //qDebug() << "output is: " << output;
     // reinstall and downgrade
     if(!output.contains("Success"))
     {
         QString program = QString("%1/adb -s %2 install -r -d %3").arg(adbPathStr, currentDevice, fileName);
-        qDebug() << "program is: " << program;
+        //qDebug() << "program is: " << program;
 
         // read adb devices data to array
         auto output = runProcess(program);
-        qDebug() << "output is: " << output; // if empty then need to show error
+        //qDebug() << "output is: " << output; // if empty then need to show error
     }
 
     parseData();

@@ -39,6 +39,10 @@ private slots:
     void on_go_clicked();
     void on_deleteBtn_clicked();
 
+    void on_sdCard_clicked();
+
+    void on_currentDir_returnPressed();
+
 private:
     Ui::FileExplorer*           m_UI;
     std::shared_ptr<QProcess>   m_shellProcess;

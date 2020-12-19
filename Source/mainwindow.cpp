@@ -39,11 +39,11 @@ void MainWindow::getConnectedDevices()
     checkADBPath(adbPathStr, this);
 
     QString adbCMD = adbPathStr + "/adb devices";
-    qDebug() << "program is: " << adbCMD;
+    //qDebug() << "program is: " << adbCMD;
     QByteArray output = runProcess(adbCMD);
 
     //auto output = runProcess(adbCMD);
-    qDebug() << "output is: " << output;
+    //qDebug() << "output is: " << output;
 
     // now parse devices
     int lastItem = 0;
@@ -120,21 +120,21 @@ void MainWindow::on_actionInstall_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("APK Files (*.apk)"));
-    qDebug() << "Selected file is: " << fileName;
+    //qDebug() << "Selected file is: " << fileName;
 
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
     if(currentDevice.isEmpty())
         return;
     QString program = QString("adb -s %1 install %2").arg(currentDevice, fileName);
-    qDebug() << "program is: " << program;
+    //qDebug() << "program is: " << program;
 
     // read adb devices data to array
     auto output = runProcess(program);
-    qDebug() << "output is: " << output; // if empty then need to show error
+    //qDebug() << "output is: " << output; // if empty then need to show error
     // TODO: implment UI logger
 
     //QByteArray badOutput = myProcess.readAllStandardError();
-    //qDebug() << "bad output is: " << badOutput;
+    ////qDebug() << "bad output is: " << badOutput;
 }
 
 void MainWindow::on_actionShell_triggered()

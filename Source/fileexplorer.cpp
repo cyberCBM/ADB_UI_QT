@@ -20,7 +20,7 @@ FileExplorer::FileExplorer(QWidget *parent) :
     connect(m_UI->files,SIGNAL(doubleClicked(const QModelIndex)),this,SLOT(ItemClicked(QModelIndex)));
 
     QString currentDevice = SettingManager::value(ADB_DEVICE).toString();
-    qDebug() << "current device is: " << currentDevice;
+    //qDebug() << "current device is: " << currentDevice;
 
     QString adbPathStr = SettingManager::value(ADB_PATH).toString();
     checkADBPath(adbPathStr, this);
@@ -29,7 +29,7 @@ FileExplorer::FileExplorer(QWidget *parent) :
     {
         // start process
         QString program = QString("%1/adb -s %2 shell").arg(adbPathStr, currentDevice);
-        qDebug() << "program is: " << program;
+        //qDebug() << "program is: " << program;
         m_shellProcess->start(program);
         // send ls command
         m_shellProcess->write("clear\n");
@@ -50,6 +50,8 @@ QString FileExplorer::substring(const QString &str, int start, int end)
 
 QString FileExplorer::removeUnessaryChars(const QString &str)
 {
+    if(str.isEmpty())
+        return "";
     QString result = str;
 
     if(result[0] == '\xa')
@@ -95,7 +97,7 @@ void FileExplorer::on_up_clicked()
 void FileExplorer::getDirectory()
 {
     QByteArray outputData = m_shellProcess->readAllStandardOutput();
-    qDebug() << "Current dir is: " << outputData;
+    //qDebug() << "Current dir is: " << outputData;
     auto showText = removeUnessaryChars(QString(outputData));
     m_UI->currentDir->setText(showText);
 }
@@ -111,11 +113,11 @@ void FileExplorer::on_upload_clicked()
 
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Any"), "~/", tr("Any (*)"));
-    qDebug() << "Selected file is: " << fileName;
+    //qDebug() << "Selected file is: " << fileName;
 
     // now create new process to upload file
     QString adbCommand = QString("%1/adb -s %2 push %3 %4").arg(adbPathStr, currentDevice, fileName, substring(m_UI->currentDir->text(), 0, m_UI->currentDir->text().size()-1));
-    qDebug() << "program is: " << adbCommand;
+    //qDebug() << "program is: " << adbCommand;
     m_ADBProcess->start(adbCommand);
 
     // now refresh
@@ -137,14 +139,14 @@ void FileExplorer::on_download_clicked()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                     "~/",
                                                     tr("Any (*)"));
-    qDebug() << "Selected file is: " << fileName;
+    //qDebug() << "Selected file is: " << fileName;
 
     // now create new process to upload file
     QModelIndex index = m_UI->files->currentIndex();
     QString itemText = index.data(Qt::DisplayRole).toString();
     QString filePath = substring(m_UI->currentDir->text(), 0, m_UI->currentDir->text().size()-1) + "/" + substring(itemText, 1, itemText.size());
     QString adbCommand = QString("%1/adb -s %2 pull %3 %4").arg(adbPathStr, currentDevice, filePath, fileName);
-    qDebug() << "program is: " << adbCommand;
+    //qDebug() << "program is: " << adbCommand;
     m_ADBProcess->start(adbCommand);
 }
 
@@ -154,7 +156,7 @@ void FileExplorer::on_deleteBtn_clicked()
     QModelIndex index = m_UI->files->currentIndex();
     QString itemText = index.data(Qt::DisplayRole).toString();
     QString command = QString("rm -rf %1").arg(itemText);
-    qDebug() << "Delete command is: " << command;
+    //qDebug() << "Delete command is: " << command;
 
     m_shellProcess->write("clear\n");
     m_shellProcess->write(command.toUtf8());
@@ -179,9 +181,7 @@ void FileExplorer::on_rename_clicked()
     {
         // now change filename
         QString command = QString("mv %1 %2").arg(itemText, text);
-
-        qDebug() << "Move command is: " << command;
-
+        //qDebug() << "Move command is: " << command;
         m_shellProcess->write("clear\n");
         m_shellProcess->write(command.toUtf8());
         m_shellProcess->write("ls -F\n");
@@ -226,7 +226,7 @@ void FileExplorer::goToDirectory(QString& path)
 void FileExplorer::adbOutputReady()
 {
     QByteArray outputData = m_ADBProcess->readAllStandardOutput();
-    qDebug() << "adb output: " << outputData;
+    //qDebug() << "adb output: " << outputData;
 }
 
 void FileExplorer::outputReady()
@@ -255,6 +255,17 @@ void FileExplorer::outputReady()
     m_slModel->setStringList(m_stringList);
     m_UI->files->setModel(m_slModel);
 
-    qDebug() << "Good output is: " << outputData;
+    //qDebug() << "Good output is: " << outputData;
 }
 
+
+void FileExplorer::on_sdCard_clicked()
+{
+    m_UI->currentDir->setText("/storage/emulated/0");
+    on_go_clicked();
+}
+
+void FileExplorer::on_currentDir_returnPressed()
+{
+    on_go_clicked();
+}

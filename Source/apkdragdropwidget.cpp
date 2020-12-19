@@ -61,20 +61,20 @@ void apkDragDropWidget::installAPKFile(const QString& fileName)
     checkADBPath(adbPathStr, this);
     // this command can manage the upgrade of install but not downgrade
     QString program = QString("%1/adb -s %2 install %3").arg(adbPathStr, currentDevice, fileName);
-    qDebug() << "program is: " << program;
+    //qDebug() << "program is: " << program;
 
     // read adb devices data to array
     auto output = runProcess(program);
-    qDebug() << "output is: " << output; // if empty then need to show error
+    //qDebug() << "output is: " << output; // if empty then need to show error
     if(!output.contains("Success"))
     {
         // reinstall or downgrade the same package
         QString program = QString("%1/adb -s %2 install -r -d %3").arg(adbPathStr, currentDevice, fileName);
-        qDebug() << "program is: " << program;
+        //qDebug() << "program is: " << program;
 
         // read adb devices data to array
         auto output = runProcess(program);
-        qDebug() << "output is: " << output; // if empty then need to show error
+        //qDebug() << "output is: " << output; // if empty then need to show error
     }
     m_UI->label->setText("Drag APK to Install");
     setStyleSheet ("background-color: rgba(255, 0, 0, 0);");
