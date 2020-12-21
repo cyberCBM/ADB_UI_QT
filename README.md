@@ -2,7 +2,7 @@
 Cross platform UI tool for android ADB basic day to day features like 
 
 - List connected debug enabled devices (adb devices)
-- Drag and drop install (Upgrade/Downgrade)
+- Drag and drop APK install (Upgrade/Downgrade)
 - File Explorer (Upload, Download, Delete, Rename)
 - Shell Terminal (run your own command)
 
