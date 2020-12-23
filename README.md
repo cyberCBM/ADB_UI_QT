@@ -10,6 +10,8 @@ TODO:
 
 - One click log file extract.
 
+*Download ADB Platform tools : https://developer.android.com/studio/releases/platform-tools
+
 MIT License
 Copyright © 2020 CyberCBM(Chaitanya Modi). 
 CyberCBM :bowtie: V1
